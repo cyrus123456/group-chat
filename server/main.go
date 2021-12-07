@@ -13,4 +13,19 @@ func main() {
 	} else {
 		fmt.Println("\"0.0.0.0:6666\"端口监听成功")
 	}
+
+	// 循环监听
+	for {
+		netConn, error := netListener.Accept()
+		if error != nil {
+			fmt.Print("sever main netConn 循环中接收消息失败")
+		}
+		go distributionLink(netConn)
+	}
+}
+
+func distributionLink(netConn net.Conn) {
+	defer netConn.Close()
+
+	panic("unimplemented")
 }
