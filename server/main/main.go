@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	processingcenterdistribution "group-chat/server/processingCenterDistribution"
 	"net"
 )
 
 func main() {
-	netListener, error := net.Listen("tcp", "0.0.0.0:8888")
+	netListener, err := net.Listen("tcp", "0.0.0.0:8888")
 	defer netListener.Close()
-	if error != nil {
-		fmt.Printf("\"0.0.0.0:8888\"端口监听失败%v\n", error)
+	if err != nil {
+		fmt.Printf("\"0.0.0.0:8888\"端口监听失败%v\n", err)
 		return
 	} else {
 		fmt.Println("\"0.0.0.0:6666\"端口监听成功")
@@ -28,4 +29,14 @@ func main() {
 
 func processingCenter(netConn net.Conn) {
 	defer netConn.Close()
+	processingcenterdistributionClassificationProcessingStruct := processingcenterdistribution.ClassificationProcessingStruct{
+		NetConn: netConn,
+	}
+	for {
+		err := processingcenterdistributionClassificationProcessingStruct.ClassificationProcessing()
+		if err != nil {
+			fmt.Printf("循环读取客户端发送消息失败%v\n", err)
+			return
+		}
+	}
 }
