@@ -32,11 +32,9 @@ func processingCenter(netConn net.Conn) {
 	processingcenterdistributionClassificationProcessingStruct := processingcenterdistribution.ClassificationProcessingStruct{
 		NetConn: netConn,
 	}
-	for {
-		err := processingcenterdistributionClassificationProcessingStruct.ClassificationProcessing()
-		if err != nil {
-			fmt.Printf("循环读取客户端发送消息失败%v\n", err)
-			return
-		}
+	err := processingcenterdistributionClassificationProcessingStruct.ClassificationProcessing()
+	if err != nil {
+		fmt.Printf("循环读取客户端发送消息失败%v\n", err)
+		return
 	}
 }
