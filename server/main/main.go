@@ -2,9 +2,14 @@ package main
 
 import (
 	"fmt"
+	"group-chat/server/model"
 	processingcenterdistribution "group-chat/server/processingCenterDistribution"
 	"net"
 )
+
+func init() {
+	model.InitRedisclientpool()
+}
 
 func main() {
 	netListener, err := net.Listen("tcp", "0.0.0.0:8888")
