@@ -34,8 +34,8 @@ func (SerializationProcessingStruct *SerializationProcessingStruct) ReceiveMessa
 	return
 }
 
-func (SerializationProcessingStruct *SerializationProcessingStruct) SendMessagePacket(mes_json messageType.MessageStruct) (err error) {
-	mes_jsonByte, err := json.Marshal(mes_json)
+func (SerializationProcessingStruct *SerializationProcessingStruct) SendMessagePacket(mes messageType.MessageStruct) (err error) {
+	mes_jsonByte, err := json.Marshal(mes)
 	if err != nil {
 		fmt.Printf("服务器返回消息序列化失败%v\n", err)
 		return

@@ -8,7 +8,10 @@ import (
 )
 
 func init() {
-	model.InitRedisclientpool()
+	err := model.InitRedisclientpool()
+	if err != nil {
+		fmt.Println("连接池断开")
+	}
 }
 
 func main() {
