@@ -14,9 +14,9 @@ type UserMessageProcessingStruct struct {
 	UserId  int
 }
 
-func (UserMessageProcessingStruct *UserMessageProcessingStruct) UserMessageProcessing(mes *messageType.MessageStruct) (err error) {
-	loginMes := messageType.LoginMessageDataStruct{}
-	err = json.Unmarshal([]byte(mes.MessageData), &loginMes)
+func (_this *UserMessageProcessingStruct) LoginMessageProcessing(mes *messageType.MessageStruct) (err error) {
+	loginMesData := messageType.LoginMessageDataStruct{}
+	err = json.Unmarshal([]byte(mes.MessageData), &loginMesData)
 	if err != nil {
 		fmt.Printf("处理登录信息反序列化存入登录消息体内容结构体失败%v\n", err)
 		return
@@ -25,7 +25,7 @@ func (UserMessageProcessingStruct *UserMessageProcessingStruct) UserMessageProce
 		RedisClientPool: model.RedisClientPool,
 	}
 	loginResMes := messageType.LoginResMessageDataStruct{}
-	if user, err := userDaoStruct.LoginVerification(loginMes.UserId, loginMes.UserPwd); err != nil {
+	if user, err := userDaoStruct.LoginVerification(loginMesData.UserId, loginMesData.UserPwd); err != nil {
 		if err == model.ERROR_USER_NOT_EXIST {
 			loginResMes.Code = 500 //账号密码错误
 			loginResMes.Error = model.ERROR_USER_NOT_EXIST.Error()
@@ -41,7 +41,7 @@ func (UserMessageProcessingStruct *UserMessageProcessingStruct) UserMessageProce
 		}
 	} else {
 		loginResMes.Code = 200 //200表示通过
-		loginResMes.UserId = UserMessageProcessingStruct.UserId
+		loginResMes.UserId = _this.UserId
 		loginResMes.UserName = user.UserName
 		fmt.Printf("服务端验证用户%v登陆成功\n", user.UserName)
 	}
@@ -55,7 +55,7 @@ func (UserMessageProcessingStruct *UserMessageProcessingStruct) UserMessageProce
 	mes.MessageData = string(loginResMesByte)
 
 	toolsSerializationProcessingStruct := tools.SerializationProcessingStruct{
-		NetConn: UserMessageProcessingStruct.NetConn,
+		NetConn: _this.NetConn,
 	}
 	err = toolsSerializationProcessingStruct.SendMessagePacket(*mes)
 	if err != nil {
@@ -63,5 +63,14 @@ func (UserMessageProcessingStruct *UserMessageProcessingStruct) UserMessageProce
 		return err
 	}
 
+	return
+}
+
+func (_this *UserMessageProcessingStruct) RegistrationMessageProcessing(mes *messageType.MessageStruct) (err error) {
+	registeredMesData := messageType.RegisteredMessageDataStruct{}
+	if err = json.Unmarshal([]byte(mes.MessageData), registeredMesData); err != nil {
+		fmt.Printf("服务器处理注册信息反序列化存入注册消息内容结构体失败%v\n", err)
+		return
+	}
 	return
 }

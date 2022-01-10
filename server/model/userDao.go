@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"group-chat/messageType"
 
 	"github.com/go-redis/redis"
 )
@@ -25,8 +26,8 @@ type UserDaoStruct struct {
 	RedisClientPool *redis.Client
 }
 
-func (UserDaoStruct *UserDaoStruct) LoginVerification(userId int, userPwd string) (user *UserStruct, err error) {
-	if user, err = UserDaoStruct.getUserByid(userId); err == redis.Nil {
+func (_this *UserDaoStruct) LoginVerification(userId int, userPwd string) (user *UserStruct, err error) {
+	if user, err = _this.getUserByid(userId); err == redis.Nil {
 		fmt.Printf("从Redis获取用户失败，用户不存在%v\n", err)
 		ERROR_USER_NOT_EXIST.Error()
 		err = ERROR_USER_NOT_EXIST
@@ -42,10 +43,26 @@ func (UserDaoStruct *UserDaoStruct) LoginVerification(userId int, userPwd string
 	return
 }
 
-func (UserDaoStruct *UserDaoStruct) getUserByid(id int) (user *UserStruct, err error) {
+func (_this *UserDaoStruct) register(registeredMessageData *messageType.RegisteredMessageDataStruct) (err error) {
+	user, err := _this.getUserByid(registeredMessageData.UserId)
+	if (registeredMessageData.UserId == user.UserId) && (registeredMessageData.UserPwd == user.UserPwd) {
+		fmt.Printf("从Redis中用户已经存在%v\n", err)
+		ERROR_USER_EXIST.Error()
+		err = ERROR_USER_EXIST
+		return
+	}
+
+	if registeredMessageDataByte, err := json.Marshal(registeredMessageData); err != nil {
+		fmt.Printf("注册信息序列化失败%v\n", err)
+		return err
+	}
+	return
+}
+
+func (_this *UserDaoStruct) getUserByid(id int) (user *UserStruct, err error) {
 
 	ctx := context.Background()
-	userByte, err := UserDaoStruct.RedisClientPool.Get(ctx, string(id)).Result()
+	userByte, err := _this.RedisClientPool.Get(ctx, string(id)).Result()
 	if err == redis.Nil {
 		fmt.Printf("从Redis获取用户失败，用户不存在%v\n", err)
 		ERROR_USER_NOT_EXIST.Error()
