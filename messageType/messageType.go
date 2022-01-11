@@ -2,13 +2,13 @@ package messageType
 
 //消息类型常量
 const (
-	LoginMessageType                   = "loginMessageType"
-	LoginResMessageType                = "loginResMessageType"
-	RegisteredMessageType              = "registeredMessageType"
-	RegisteredResMesRegisteredsageType = "registeredResMessageType"
-	UserStatusNotificationType         = "userStatusNotificationType"
-	SmsMessageType                     = "smsMessageType"
-	SmsResMessageType                  = "smsResMessageType"
+	LoginMessageType           = "loginMessageType"
+	LoginResMessageType        = "loginResMessageType"
+	RegisteredMessageType      = "registeredMessageType"
+	RegisteredResMessageType   = "registeredResMessageType"
+	UserStatusNotificationType = "userStatusNotificationType"
+	SmsMessageType             = "smsMessageType"
+	SmsResMessageType          = "smsResMessageType"
 )
 
 //用户状态常量

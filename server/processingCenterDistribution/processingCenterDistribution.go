@@ -49,7 +49,15 @@ func (_this *ClassificationProcessingStruct) ClassificationJudgment(mes *message
 			}
 			return
 		case messageType.RegisteredMessageType:
-			fmt.Println("处理登陆消息")
+			fmt.Println("处理注册消息")
+			userMessageProcessingStruct := &UserMessageProcessingStruct{
+				NetConn: _this.NetConn,
+			}
+			err = userMessageProcessingStruct.RegistrationMessageProcessing(mes)
+			if err != nil {
+				fmt.Printf("处理注册消息失败%v\n", err)
+				return
+			}
 			return
 		default:
 			fmt.Println("消息类型错误")

@@ -72,5 +72,34 @@ func (_this *UserMessageProcessingStruct) RegistrationMessageProcessing(mes *mes
 		fmt.Printf("服务器处理注册信息反序列化存入注册消息内容结构体失败%v\n", err)
 		return
 	}
+	registeredResMessageDataStruct := messageType.RegisteredResMessageDataStruct{}
+	userDaoStruct := model.UserDaoStruct{
+		RedisClientPool: model.RedisClientPool,
+	}
+	err = userDaoStruct.Register(&registeredMesData)
+	if err == model.ERROR_USER_EXIST {
+		registeredResMessageDataStruct.Code = 500 //用户已存在
+		registeredResMessageDataStruct.Error = model.ERROR_USER_EXIST.Error()
+		return
+	} else if err != nil {
+		registeredResMessageDataStruct.Code = 505
+		registeredResMessageDataStruct.Error = "未知错误"
+		return
+	}
+	registResMesByte, err := json.Marshal(registeredResMessageDataStruct)
+	if err != nil {
+		fmt.Printf("返回注册消息结构体序列化失败%v\n", err)
+		return err
+	}
+	mes.MessageType = messageType.RegisteredResMessageType
+	mes.MessageData = string(registResMesByte)
+	toolsSerializationProcessingStruct := tools.SerializationProcessingStruct{
+		NetConn: _this.NetConn,
+	}
+	err = toolsSerializationProcessingStruct.SendMessagePacket(*mes)
+	if err != nil {
+		fmt.Printf("将要返回给客户端消息发送失败%v\n", err)
+		return
+	}
 	return
 }
