@@ -59,6 +59,15 @@ func (_this *ClassificationProcessingStruct) ClassificationJudgment(mes *message
 				return
 			}
 			return
+		case messageType.SmsMessageType:
+			fmt.Println("处理群发消息")
+			groupMessageProcessingStruct := &GroupMessageProcessingStruct{}
+			err = groupMessageProcessingStruct.GroupMessageProcessing(mes)
+			if err != nil {
+				fmt.Printf("群发消息失败%v\n", err)
+				return err
+			}
+			return
 		default:
 			fmt.Println("消息类型错误")
 			return
